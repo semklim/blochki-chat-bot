@@ -33,6 +33,9 @@
     "prepare": "husky || true"
   },
   "dependencies": {
+    "@antfu/eslint-config": "2.21.2",
+    "@types/ioredis": "^5.0.0",
+    "@types/node": "20.14.10",
     "@grammyjs/auto-chat-action": "0.1.1",
     "@grammyjs/hydrate": "1.4.1",
     "@grammyjs/i18n": "1.0.2",
@@ -58,9 +61,6 @@
     "zod": "3.23.8"
   },
   "devDependencies": {
-    "@antfu/eslint-config": "2.21.2",
-    "@types/ioredis": "^5.0.0",
-    "@types/node": "20.14.10",
     "eslint": "8.57.0",
     "husky": "9.0.11",
     "lint-staged": "15.2.7",
