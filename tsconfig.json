@@ -1,0 +1,25 @@
+{
+  "compilerOptions": {
+    "target": "ES2021",
+    "rootDir": ".",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "paths": {
+      "#root/*": [
+        "./src/*"
+      ]
+    },
+    "types": ["telegram-inline-calendar-types"],
+    "strict": true,
+    "noEmit": true,
+    "outDir": "build",
+    "sourceMap": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "preserveWatchOutput": true
+  },
+  "include": [
+    "src/**/*",
+    "api/**/*"
+  ]
+}
