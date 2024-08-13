@@ -1,8 +1,10 @@
-<h1 align="center">🤖 Telegram Bot Template</h1>
+<h1 align="center">🤖 Telegram Bot Bulochki</h1>
 
 <img align="right" width="35%" src="https://github.com/bot-base/telegram-bot-template/assets/26162440/c4371683-3e99-4b1c-ae8e-11ccbea78f4b">
 
-Bot starter template based on [grammY](https://grammy.dev/) bot framework.
+Bot based on [grammY](https://grammy.dev/) bot framework.
+
+Project based on [telegram-bot-template](https://github.com/bot-base/telegram-bot-template).
 
 ## Features
 
@@ -12,27 +14,12 @@ Bot starter template based on [grammY](https://grammy.dev/) bot framework.
 - Graceful shutdown
 - Logger (powered by [pino](https://github.com/pinojs/pino))
 - Ultrafast and multi-runtime server (powered by [hono](https://github.com/honojs/hono))
-- Ready-to-use deployment setups:
-    - [Docker](#docker-dockercom)
-    - [Vercel](#vercel-vercelcom)
-- Examples:
-    - grammY plugins:
-        - [Conversations](#grammy-conversations-grammydevpluginsconversations)
-        - [Runner](#grammy-runner-grammydevpluginsrunner)
-    - Databases:
-      - [Prisma ORM](#prisma-orm-prismaio)
-    - Runtimes:
-      - [Bun](#bun-bunsh)
 
 ## Usage
 
-Follow these steps to set up and run your bot using this template:
+Follow these steps to set up and run your bot:
 
-1. **Create a New Repository**
-
-    Start by creating a new repository using this template. You can do this by clicking [here](https://github.com/bot-base/telegram-bot-template/generate).
-
-2. **Environment Variables Setup**
+1. **Environment Variables Setup**
 
     Create an environment variables file by copying the provided example file:
      ```bash
@@ -40,7 +27,7 @@ Follow these steps to set up and run your bot using this template:
      ```
     Open the newly created `.env` file and set the `BOT_TOKEN` environment variable.
 
-3. **Launching the Bot**
+2. **Launching the Bot**
 
     You can run your bot in both development and production modes.
 
@@ -111,183 +98,6 @@ project-root/
       ├── logger.ts # Logging setup
       └── main.ts   # Application entry point
 ```
-
-## Deploy
-
-### Docker ([docker.com](https://docker.com))
-
-Branch:
-[deploy/docker-compose](https://github.com/bot-base/telegram-bot-template/tree/deploy/docker-compose)
-([open diff](https://github.com/bot-base/telegram-bot-template/compare/deploy/docker-compose))
-
-Use in your project:
-
-1. Add the template repository as a remote
-
-```sh
-git remote add template git@github.com:bot-base/telegram-bot-template.git
-git remote update
-```
-
-2. Merge deployment setup
-
-```sh
-git merge template/deploy/docker-compose -X theirs --squash --no-commit --allow-unrelated-histories
-```
-
-3. Follow [the usage instructions](https://github.com/bot-base/telegram-bot-template/tree/deploy/docker-compose#usage) in the `deploy/docker-compose` branch.
-
-### Vercel ([vercel.com](https://vercel.com))
-
-Branch:
-[deploy/vercel](https://github.com/bot-base/telegram-bot-template/tree/deploy/vercel)
-([open diff](https://github.com/bot-base/telegram-bot-template/compare/deploy/vercel))
-
-Use in your project:
-
-1. Add the template repository as a remote
-
-```sh
-git remote add template git@github.com:bot-base/telegram-bot-template.git
-git remote update
-```
-
-2. Merge deployment setup
-
-```sh
-git merge template/deploy/vercel -X theirs --squash --no-commit --allow-unrelated-histories
-```
-
-3. Follow [the usage instructions](https://github.com/bot-base/telegram-bot-template/tree/deploy/vercel#usage) in the `deploy/vercel` branch.
-
-## Examples
-
-### grammY conversations ([grammy.dev/plugins/conversations](https://grammy.dev/plugins/conversations))
-
-Branch:
-[example/plugin-conversations](https://github.com/bot-base/telegram-bot-template/tree/example/plugin-conversations)
-([open diff](https://github.com/bot-base/telegram-bot-template/compare/example/plugin-conversations))
-
-Use in your project:
-
-1. Add the template repository as a remote
-
-```sh
-git remote add template git@github.com:bot-base/telegram-bot-template.git
-git remote update
-```
-
-2. Merge example
-
-```sh
-git merge template/example/plugin-conversations -X theirs --squash --no-commit --allow-unrelated-histories
-```
-
-3. Install dependencies
-
-```sh
-npm i @grammyjs/conversations
-```
-
-4. Follow [the usage instructions](https://github.com/bot-base/telegram-bot-template/tree/example/plugin-conversations#usage) in the `example/plugin-conversations` branch.
-
-### grammY runner ([grammy.dev/plugins/runner](https://grammy.dev/plugins/runner))
-
-Branch:
-[example/plugin-runner](https://github.com/bot-base/telegram-bot-template/tree/example/plugin-runner)
-([open diff](https://github.com/bot-base/telegram-bot-template/compare/example/plugin-runner))
-
-Use in your project:
-
-1. Add the template repository as a remote
-
-```sh
-git remote add template git@github.com:bot-base/telegram-bot-template.git
-git remote update
-```
-
-2. Merge example
-
-```sh
-git merge template/example/plugin-runner -X theirs --squash --no-commit --allow-unrelated-histories
-```
-
-3. Install dependencies
-
-```sh
-npm i @grammyjs/runner
-```
-
-4. Follow [the usage instructions](https://github.com/bot-base/telegram-bot-template/tree/example/plugin-runner#usage) in the `example/plugin-runner` branch.
-
-### Prisma ORM ([prisma.io](https://prisma.io))
-
-Branch:
-[example/orm-prisma](https://github.com/bot-base/telegram-bot-template/tree/example/orm-prisma)
-([open diff](https://github.com/bot-base/telegram-bot-template/compare/example/orm-prisma))
-
-Use in your project:
-
-1. Add the template repository as a remote
-
-```sh
-git remote add template git@github.com:bot-base/telegram-bot-template.git
-git remote update
-```
-
-2. Merge example
-
-```sh
-git merge template/example/orm-prisma -X theirs --squash --no-commit --allow-unrelated-histories
-```
-
-3. Install dependencies
-
-```sh
-npm i -D prisma
-npm i @prisma/client
-```
-
-4. Follow [the usage instructions](https://github.com/bot-base/telegram-bot-template/tree/example/orm-prisma#usage) in the `example/orm-prisma` branch.
-
-### Bun ([bun.sh](https://bun.sh))
-
-Branch:
-[example/runtime-bun](https://github.com/bot-base/telegram-bot-template/tree/example/runtime-bun)
-([open diff](https://github.com/bot-base/telegram-bot-template/compare/example/runtime-bun))
-
-Use in your project:
-
-1. Add the template repository as a remote
-
-```sh
-git remote add template git@github.com:bot-base/telegram-bot-template.git
-git remote update
-```
-
-2. Merge example
-
-```sh
-git merge template/example/runtime-bun -X theirs --squash --no-commit --allow-unrelated-histories
-```
-
-3. Install dependencies
-
-```sh
-# remove Node-related dependencies
-npm r @types/node tsx tsc-watch
-
-# install dependencies
-bun i
-
-# remove npm lockfile
-rm package-lock.json
-
-# install bun typings
-bun add -d @types/bun
-```
-
-4. Follow [the usage instructions](https://github.com/bot-base/telegram-bot-template/tree/example/runtime-bun#usage) in the `example/runtime-bun` branch.
 
 ## Environment Variables
 
