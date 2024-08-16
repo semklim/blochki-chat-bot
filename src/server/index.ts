@@ -17,6 +17,7 @@ export default class BotServer {
   config: IConfig
   constructor(config: IConfig) {
     this.config = config;
+    console.log(this.config);
   }
 
   private createServerManager(server: Awaited<ReturnType<typeof this.createServer>>) {
