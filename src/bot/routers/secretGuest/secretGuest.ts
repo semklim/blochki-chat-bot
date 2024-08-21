@@ -1,9 +1,9 @@
 import { selectAddressData } from "#root/bot/callback-data/select-address.js";
 import { Context } from "#root/bot/context.js";
 import validateAnswer from "#root/bot/filters/secret-guest/validateAnswer.js";
+import { rateSelectorHandler } from "#root/bot/handlers/secretGuest/index.js";
 import { logHandle } from "#root/bot/helpers/logging.js";
 import { sleep } from "#root/bot/helpers/sleep.js";
-import validateNumber from "#root/bot/helpers/validateGrade.js";
 import createMainMenuKeyboard from "#root/bot/keyboards/mainMenu.js";
 import { createSelectAddressKeyboard } from "#root/bot/keyboards/select-address.js";
 import { createCustomSelectGradeKeyboard } from "#root/bot/keyboards/select-grade.js";
@@ -13,7 +13,7 @@ import { bot } from "#root/main.js";
 import { Router } from "@grammyjs/router";
 import { Keyboard } from "grammy";
 
-const DEFAULT_SLEEP = 200;
+const DEFAULT_SLEEP = 0;
 
 export const secretGuestRouter = new Router<Context>((ctx) => ctx.session.secretGuestMenu);
 
@@ -115,19 +115,10 @@ const facade = secretGuestRouter.route("fasade");
 
 facade.on("msg:text",
   logHandle("keyboard-facade-select"),
-  async (ctx) => {
-    const grade = validateNumber(ctx.msg.text);
-
-    if (typeof grade === 'undefined') return;
-
-    ctx.session.secretGuestFormData["facadeGrade"] = grade;
-    ctx.session.secretGuestMenu = "zale";
-
-    ctx.chatAction = 'typing';
-    await sleep(DEFAULT_SLEEP);
-
-    await ctx.reply(ctx.t("secret-guest.zale"));
-  }
+  rateSelectorHandler({
+    currStep: 'fasade',
+    nextStep: 'zale',
+  })
 );
 
 facade.use((ctx) =>
@@ -138,19 +129,10 @@ const zal = secretGuestRouter.route("zale");
 
 zal.on("msg:text",
   logHandle("keyboard-zal-select"),
-  async (ctx) => {
-    const grade = validateNumber(ctx.msg.text);
-
-    if (typeof grade === 'undefined') return;
-
-    ctx.session.secretGuestFormData["zalGrade"] = grade;
-    ctx.session.secretGuestMenu = "chistotaVitrin";
-
-    ctx.chatAction = 'typing';
-    await sleep(DEFAULT_SLEEP);
-
-    await ctx.reply(ctx.t("secret-guest.chistotaVitrin"));
-  }
+  rateSelectorHandler({
+    currStep: 'zale',
+    nextStep: 'chistotaVitrin',
+  })
 );
 
 zal.use((ctx) =>
@@ -162,20 +144,10 @@ const chistotaVitrin = secretGuestRouter.route("chistotaVitrin");
 
 chistotaVitrin.on("msg:text",
   logHandle("keyboard-chistotaVitrin-select"),
-  async (ctx) => {
-    const grade = validateNumber(ctx.msg.text);
-
-    if (typeof grade === 'undefined') return;
-
-    ctx.session.secretGuestFormData["chistotaVitrinGrade"] = grade;
-    ctx.session.secretGuestMenu = "privitnist";
-
-    ctx.chatAction = 'typing';
-    await sleep(DEFAULT_SLEEP);
-
-    await ctx.reply(ctx.t("secret-guest.privitnist"));
-
-  }
+  rateSelectorHandler({
+    currStep: 'chistotaVitrin',
+    nextStep: 'privitnist',
+  })
 );
 
 chistotaVitrin.use((ctx) =>
@@ -187,25 +159,15 @@ const privitnist = secretGuestRouter.route("privitnist");
 
 privitnist.on("msg:text",
   logHandle("keyboard-privitnist-select"),
-  async (ctx) => {
-    const grade = validateNumber(ctx.msg.text);
-
-    if (typeof grade === 'undefined') return;
-
-    ctx.session.secretGuestFormData["privitnistGrade"] = grade;
-    ctx.session.secretGuestMenu = "noticeAndGreet";
-
-    ctx.chatAction = 'typing';
-    await sleep(DEFAULT_SLEEP);
-
-    await ctx.reply(ctx.t('secret-guest.noticeAndGreet'), {
-      reply_markup: new Keyboard()
-        .text(ctx.t('noticeAndGreetQuestion.yes')).row()
-        .text(ctx.t('noticeAndGreetQuestion.not')).row()
-        .text(ctx.t('noticeAndGreetQuestion.definitelyNot')).row()
-        .resized(),
-    });
-  }
+  rateSelectorHandler({
+    currStep: 'privitnist',
+    nextStep: 'noticeAndGreet',
+    customKeyboard: (ctx) => new Keyboard()
+      .text(ctx.t('noticeAndGreetQuestion.yes')).row()
+      .text(ctx.t('noticeAndGreetQuestion.not')).row()
+      .text(ctx.t('noticeAndGreetQuestion.definitelyNot')).row()
+      .resized(),
+  })
 );
 
 privitnist.use((ctx) =>
@@ -351,20 +313,10 @@ const rateAssortment = secretGuestRouter.route("rateAssortment");
 rateAssortment
   .on("msg:text",
     logHandle("keyboard-rateAssortment-select"),
-    async (ctx) => {
-      const grade = validateNumber(ctx.msg.text);
-
-      ctx.chatAction = 'typing';
-      await sleep(DEFAULT_SLEEP);
-
-      if (typeof grade === 'undefined') return;
-
-      ctx.session.secretGuestFormData["rateAssortment"] = grade;
-      ctx.session.secretGuestMenu = "ratePricingPolicy";
-      await ctx.reply(ctx.t('secret-guest.ratePricingPolicy'), {
-        reply_markup: createCustomSelectGradeKeyboard(),
-      });
-    }
+    rateSelectorHandler({
+      currStep: 'rateAssortment',
+      nextStep: 'ratePricingPolicy'
+    })
   );
 
 rateAssortment.use((ctx) =>
@@ -376,20 +328,10 @@ const ratePricingPolicy = secretGuestRouter.route("ratePricingPolicy");
 ratePricingPolicy
   .on("msg:text",
     logHandle("keyboard-ratePricingPolicy-select"),
-    async (ctx) => {
-      const grade = validateNumber(ctx.msg.text);
-
-      ctx.chatAction = 'typing';
-      await sleep(DEFAULT_SLEEP);
-
-      if (typeof grade === 'undefined') return;
-
-      ctx.session.secretGuestFormData["ratePricingPolicy"] = grade;
-      ctx.session.secretGuestMenu = "overallImpression";
-      await ctx.reply(ctx.t('secret-guest.overallImpression'), {
-        reply_markup: createCustomSelectGradeKeyboard(),
-      });
-    }
+    rateSelectorHandler({
+      currStep: 'ratePricingPolicy',
+      nextStep: 'overallImpression'
+    })
   );
 
 ratePricingPolicy.use((ctx) =>
@@ -401,20 +343,11 @@ const overallImpression = secretGuestRouter.route("overallImpression");
 overallImpression
   .on("msg:text",
     logHandle("keyboard-overallImpression-select"),
-    async (ctx) => {
-      const grade = validateNumber(ctx.msg.text);
-
-      ctx.chatAction = 'typing';
-      await sleep(DEFAULT_SLEEP);
-
-      if (typeof grade === 'undefined') return;
-
-      ctx.session.secretGuestFormData["overallImpression"] = grade;
-      ctx.session.secretGuestMenu = "comeback";
-      await ctx.reply(ctx.t('secret-guest.comeback'), {
-        reply_markup: createCustomYesOrNotKeyboard(ctx),
-      });
-    }
+    rateSelectorHandler({
+      currStep: 'overallImpression',
+      nextStep: 'comeback',
+      customKeyboard: (ctx) => createCustomYesOrNotKeyboard(ctx),
+    })
   );
 
 overallImpression.use((ctx) =>
@@ -477,24 +410,11 @@ const ratedishes = secretGuestRouter.route("ratedishes");
 ratedishes
   .on("msg:text",
     logHandle("keyboard-ratedishes-select"),
-    async (ctx) => {
-
-      const grade = validateNumber(ctx.msg.text);
-
-      ctx.chatAction = 'typing';
-      await sleep(DEFAULT_SLEEP);
-
-      if (typeof grade === 'undefined') return;
-
-      ctx.session.secretGuestFormData["ratedishes"] = grade;
-      ctx.session.secretGuestMenu = "clientFewWords";
-
-      await ctx.reply(ctx.t('secret-guest.clientFewWords'), {
-        reply_markup: {
-          remove_keyboard: true,
-        }
-      });
-    }
+    rateSelectorHandler({
+      currStep: 'ratedishes',
+      nextStep: 'clientFewWords',
+      customKeyboard: () => ({ remove_keyboard: true })
+    })
   );
 
 ratedishes.use((ctx) =>
