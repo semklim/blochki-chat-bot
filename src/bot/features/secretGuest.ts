@@ -27,8 +27,11 @@ feature
           }
         );
       } else {
-        const lang = await ctx.i18n.getLocale() as "en" | 'uk';
-        bot.calendar.changeLang(lang);
+        await ctx.reply(ctx.t('secret-guest.dateAndTime'), {
+          reply_markup: {
+            remove_keyboard: true,
+          }
+        });
         bot.calendar.startNavCalendar(ctx);
         ctx.session.secretGuestMenu = "date";
       }

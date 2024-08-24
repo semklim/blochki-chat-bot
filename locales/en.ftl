@@ -65,8 +65,7 @@ secret-guest =
     .start = Questionnaire for the Secret Guest of the #bulochki cafe-bakery network
     .contact = Please send your phone number.
     .contact-answer = Thank you for your trust.
-    .date = Indicate the date of the visit to the establishment
-    .time = Indicate the exact time of the visit to the establishment
+    .dateAndTime = Indicate the date and time of the visit to the establishment
     .addressAndDate = You visited the establishment at {$address}
                       on {$date}
     .address = Indicate the address of the establishment:

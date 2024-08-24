@@ -2,8 +2,20 @@ import { chunk } from '#root/bot/helpers/keyboard.js';
 import { Keyboard } from 'grammy';
 import { KeyboardButton } from 'grammy/types';
 import { Context } from '../context.js';
+import { hasProperty } from '../helpers/checkType.js';
 
-export function createCustomYesOrNotKeyboard(ctx: Context, addBtnSkip = false) {
+type TKeyboardYesOrNot = {
+  ctx: Context;
+  addBtnSkip?: boolean;
+}
+
+export function createCustomYesOrNotKeyboard(props: Context | TKeyboardYesOrNot) {
+  const newProps = hasProperty<TKeyboardYesOrNot>(props, "addBtnSkip")
+    ? { ctx: props.ctx, addBtnSkip: props.addBtnSkip }
+    : { ctx: props, addBtnSkip: false };
+
+  const { ctx, addBtnSkip } = newProps;
+
   const buttons: KeyboardButton.CommonButton[] = [
     Keyboard.text(ctx.t('yes')),
     Keyboard.text(ctx.t('not')),

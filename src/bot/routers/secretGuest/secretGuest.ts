@@ -1,9 +1,8 @@
 import { selectAddressData } from "#root/bot/callback-data/select-address.js";
 import { Context } from "#root/bot/context.js";
 import validateAnswer from "#root/bot/filters/secret-guest/validateAnswer.js";
-import { rateSelectorHandler } from "#root/bot/handlers/secretGuest/index.js";
+import { rateSelectorHandler, textHandler } from "#root/bot/handlers/secretGuest/index.js";
 import { logHandle } from "#root/bot/helpers/logging.js";
-import { sleep } from "#root/bot/helpers/sleep.js";
 import createMainMenuKeyboard from "#root/bot/keyboards/mainMenu.js";
 import { createSelectAddressKeyboard } from "#root/bot/keyboards/select-address.js";
 import { createCustomSelectGradeKeyboard } from "#root/bot/keyboards/select-grade.js";
@@ -13,7 +12,6 @@ import { bot } from "#root/main.js";
 import { Router } from "@grammyjs/router";
 import { Keyboard } from "grammy";
 
-const DEFAULT_SLEEP = 0;
 
 export const secretGuestRouter = new Router<Context>((ctx) => ctx.session.secretGuestMenu);
 
@@ -30,12 +28,13 @@ contact.on("msg:contact",
         remove_keyboard: true,
       }
     });
-    const lang = await ctx.i18n.getLocale() as "en" | 'uk';
+    await ctx.reply(ctx.t('secret-guest.dateAndTime'), {
+      reply_markup: {
+        remove_keyboard: true,
+        is_persistent: false,
+      },
+    });
 
-    ctx.chatAction = 'typing';
-    await sleep(DEFAULT_SLEEP);
-
-    bot.calendar.changeLang(lang);
     bot.calendar.startNavCalendar(ctx);
   });
 contact.use((ctx) =>
@@ -50,9 +49,6 @@ date.on("callback_query:data",
     if (ctx!.msg!.message_id === bot.calendar.chats.get(ctx!.chat!.id)) {
       const res = bot.calendar.clickButtonCalendar(ctx);
       const addresses = await getAddresses();
-
-      ctx.chatAction = 'typing';
-      await sleep(DEFAULT_SLEEP);
 
       if (!addresses) {
         ctx.session.secretGuestMenu = 'idle';
@@ -92,8 +88,6 @@ address.callbackQuery(
     );
     ctx.session.secretGuestFormData.address = addresses[i];
     const time = (ctx.session.secretGuestFormData.date as string).replace(/-/gi, '/').replace('T', ' ');
-    ctx.chatAction = 'typing';
-    await sleep(DEFAULT_SLEEP);
 
     await ctx.deleteMessage();
     await ctx.reply(ctx.t('secret-guest.addressAndDate', {
@@ -114,7 +108,6 @@ address.use((ctx) =>
 const facade = secretGuestRouter.route("fasade");
 
 facade.on("msg:text",
-  logHandle("keyboard-facade-select"),
   rateSelectorHandler({
     currStep: 'fasade',
     nextStep: 'zale',
@@ -128,7 +121,6 @@ facade.use((ctx) =>
 const zal = secretGuestRouter.route("zale");
 
 zal.on("msg:text",
-  logHandle("keyboard-zal-select"),
   rateSelectorHandler({
     currStep: 'zale',
     nextStep: 'chistotaVitrin',
@@ -143,7 +135,6 @@ zal.use((ctx) =>
 const chistotaVitrin = secretGuestRouter.route("chistotaVitrin");
 
 chistotaVitrin.on("msg:text",
-  logHandle("keyboard-chistotaVitrin-select"),
   rateSelectorHandler({
     currStep: 'chistotaVitrin',
     nextStep: 'privitnist',
@@ -158,7 +149,6 @@ chistotaVitrin.use((ctx) =>
 const privitnist = secretGuestRouter.route("privitnist");
 
 privitnist.on("msg:text",
-  logHandle("keyboard-privitnist-select"),
   rateSelectorHandler({
     currStep: 'privitnist',
     nextStep: 'noticeAndGreet',
@@ -184,20 +174,11 @@ noticeAndGreet
     ctx.t('noticeAndGreetQuestion.definitelyNot'),
   ]))
   .on("msg:text",
-    logHandle("keyboard-noticeAndGreet-select"),
-    async (ctx) => {
-      const text = ctx.msg.text;
-      ctx.session.secretGuestFormData["noticeAndGreet"] = text;
-      ctx.session.secretGuestMenu = "offerAdditional";
-
-      ctx.chatAction = 'typing';
-      await sleep(DEFAULT_SLEEP);
-
-      await ctx.reply(ctx.t('secret-guest.offerAdditional'), {
-        reply_markup: createCustomYesOrNotKeyboard(ctx),
-      });
-    }
-
+    textHandler({
+      currStep: 'noticeAndGreet',
+      nextStep: 'offerAdditional',
+      customKeyboard: (ctx) => createCustomYesOrNotKeyboard(ctx),
+    })
   );
 
 noticeAndGreet.use((ctx) =>
@@ -212,18 +193,11 @@ offerAdditional
     ctx.t('not'),
   ]))
   .on("msg:text",
-    logHandle("keyboard-offerAdditional-select"),
-    async (ctx) => {
-      ctx.session.secretGuestFormData["offerAdditional"] = ctx.msg.text;
-      ctx.session.secretGuestMenu = "giveReceipt";
-
-      ctx.chatAction = 'typing';
-      await sleep(DEFAULT_SLEEP);
-
-      await ctx.reply(ctx.t('secret-guest.giveReceipt'), {
-        reply_markup: createCustomYesOrNotKeyboard(ctx),
-      });
-    }
+    textHandler({
+      currStep: 'offerAdditional',
+      nextStep: 'giveReceipt',
+      customKeyboard: (ctx) => createCustomYesOrNotKeyboard(ctx),
+    })
   );
 
 offerAdditional.use((ctx) =>
@@ -238,18 +212,11 @@ giveReceipt
     ctx.t('not'),
   ]))
   .on("msg:text",
-    logHandle("keyboard-giveReceipt-select"),
-    async (ctx) => {
-      ctx.session.secretGuestFormData["giveReceipt"] = ctx.msg.text;
-      ctx.session.secretGuestMenu = "askApp";
-
-      ctx.chatAction = 'typing';
-      await sleep(DEFAULT_SLEEP);
-
-      await ctx.reply(ctx.t('secret-guest.askApp'), {
-        reply_markup: createCustomYesOrNotKeyboard(ctx),
-      });
-    }
+    textHandler({
+      currStep: 'giveReceipt',
+      nextStep: 'askApp',
+      customKeyboard: (ctx) => createCustomYesOrNotKeyboard(ctx),
+    })
   );
 
 giveReceipt.use((ctx) =>
@@ -263,19 +230,13 @@ askApp
     ctx.t('yes'),
     ctx.t('not'),
   ]))
+
   .on("msg:text",
-    logHandle("keyboard-askApp-select"),
-    async (ctx) => {
-      ctx.session.secretGuestFormData["askApp"] = ctx.msg.text;
-      ctx.session.secretGuestMenu = "askTypeCoffee";
-
-      ctx.chatAction = 'typing';
-      await sleep(DEFAULT_SLEEP);
-
-      await ctx.reply(ctx.t('secret-guest.askTypeCoffee'), {
-        reply_markup: createCustomYesOrNotKeyboard(ctx, true),
-      });
-    }
+    textHandler({
+      currStep: 'askApp',
+      nextStep: 'askTypeCoffee',
+      customKeyboard: (ctx) => createCustomYesOrNotKeyboard({ ctx, addBtnSkip: true }),
+    })
   );
 
 askApp.use((ctx) =>
@@ -291,17 +252,11 @@ askTypeCoffee
     ctx.t('skip')
   ]))
   .on("msg:text",
-    logHandle("keyboard-askTypeCoffee-select"),
-    async (ctx) => {
-      ctx.chatAction = 'typing';
-      await sleep(DEFAULT_SLEEP);
-
-      ctx.session.secretGuestFormData["askTypeCoffee"] = ctx.msg.text;
-      ctx.session.secretGuestMenu = "rateAssortment";
-      await ctx.reply(ctx.t('secret-guest.rateAssortment'), {
-        reply_markup: createCustomSelectGradeKeyboard(),
-      });
-    }
+    textHandler({
+      currStep: 'askTypeCoffee',
+      nextStep: 'rateAssortment',
+      customKeyboard: () => createCustomSelectGradeKeyboard(),
+    })
   );
 
 askTypeCoffee.use((ctx) =>
@@ -363,20 +318,11 @@ comeback
     ctx.t('not'),
   ]))
   .on("msg:text",
-    logHandle("keyboard-comeback-select"),
-    async (ctx) => {
-      ctx.session.secretGuestFormData["comeback"] = ctx.msg.text;
-      ctx.session.secretGuestMenu = "dishesChose";
-
-      ctx.chatAction = 'typing';
-      await sleep(DEFAULT_SLEEP);
-
-      await ctx.reply(ctx.t('secret-guest.dishesChose'), {
-        reply_markup: {
-          remove_keyboard: true,
-        }
-      });
-    }
+    textHandler({
+      currStep: 'comeback',
+      nextStep: 'dishesChose',
+      customKeyboard: () => ({ remove_keyboard: true }),
+    })
   );
 
 comeback.use((ctx) =>
@@ -387,18 +333,11 @@ const dishesChose = secretGuestRouter.route("dishesChose");
 
 dishesChose
   .on("msg:text",
-    logHandle("keyboard-dishesChose-select"),
-    async (ctx) => {
-      ctx.session.secretGuestFormData["dishesChose"] = ctx.msg.text;
-      ctx.session.secretGuestMenu = "ratedishes";
-
-      ctx.chatAction = 'typing';
-      await sleep(DEFAULT_SLEEP);
-
-      await ctx.reply(ctx.t('secret-guest.ratedishes'), {
-        reply_markup: createCustomSelectGradeKeyboard(),
-      });
-    }
+    textHandler({
+      currStep: 'dishesChose',
+      nextStep: 'ratedishes',
+      customKeyboard: () => createCustomSelectGradeKeyboard(),
+    })
   );
 
 dishesChose.use((ctx) =>
@@ -426,17 +365,11 @@ const clientFewWords = secretGuestRouter.route("clientFewWords");
 clientFewWords
   .on("msg:text",
     logHandle("keyboard-clientFewWords-select"),
-    async (ctx) => {
-      ctx.session.secretGuestFormData["clientFewWords"] = ctx.msg.text;
-      ctx.session.secretGuestMenu = "recommendEstablishment";
-
-      ctx.chatAction = 'typing';
-      await sleep(DEFAULT_SLEEP);
-
-      await ctx.reply(ctx.t('secret-guest.recommendEstablishment'), {
-        reply_markup: createCustomYesOrNotKeyboard(ctx)
-      });
-    }
+    textHandler({
+      currStep: 'clientFewWords',
+      nextStep: 'recommendEstablishment',
+      customKeyboard: (ctx) => createCustomYesOrNotKeyboard(ctx),
+    })
   );
 
 clientFewWords.use((ctx) =>
@@ -452,19 +385,11 @@ recommendEstablishment
   ]))
   .on("msg:text",
     logHandle("keyboard-recommendEstablishment-select"),
-    async (ctx) => {
-      ctx.session.secretGuestFormData["recommendEstablishment"] = ctx.msg.text;
-      ctx.session.secretGuestMenu = "photos";
-
-      ctx.chatAction = 'typing';
-      await sleep(DEFAULT_SLEEP);
-
-      await ctx.reply(ctx.t('secret-guest.photos'), {
-        reply_markup: {
-          remove_keyboard: true,
-        }
-      });
-    }
+    textHandler({
+      currStep: 'recommendEstablishment',
+      nextStep: 'photos',
+      customKeyboard: () => ({ remove_keyboard: true, })
+    })
   );
 
 recommendEstablishment.use((ctx) =>
@@ -479,9 +404,6 @@ photos
     async (ctx) => {
       ctx.session.secretGuestFormData["photos"] = ctx.msg.photo;
       ctx.session.secretGuestMenu = "idle";
-
-      ctx.chatAction = 'typing';
-      await sleep(DEFAULT_SLEEP);
 
       await ctx.reply(ctx.t('secret-guest.finish'), {
         reply_markup: createMainMenuKeyboard(),

@@ -54,7 +54,8 @@ export default class Bot {
       language: 'en',
       bot_api: 'grammy',
       time_selector_mod: true,
-      // custom_start_msg: 'Будь ласка, виберіть дату та час вашого візиту:'
+      custom_start_msg: "👇"
+
     });
 
     if (options?.commands) {
