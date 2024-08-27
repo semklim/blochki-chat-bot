@@ -13,6 +13,7 @@ import { isBirthdayRouter } from './bot/filters/isBirthday.js';
 import { isSecretGuestRouter } from './bot/filters/isSecretGuest.js';
 import Bot from './bot/index.js';
 import { addAddressRoute } from './bot/routers/addAddress/addAddress.js';
+import { changeLanguageRoute } from './bot/routers/changeLanguage/changeLanguage.js';
 import { bdRouter } from './bot/routers/countDaysToBD/countDaysToBD.js';
 import { secretGuestRouter } from './bot/routers/secretGuest/secretGuest.js';
 
@@ -31,6 +32,10 @@ export const bot = new Bot(config, new BotServer(config), {
     {
       handler: addAddressRoute,
       filterPredicate: isAddAddressRouter,
+    },
+    {
+      handler: changeLanguageRoute,
+      filterPredicate: () => true,
     }
   ],
   otherwiseCommand: unhandledFeature,

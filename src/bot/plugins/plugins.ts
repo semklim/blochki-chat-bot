@@ -24,7 +24,7 @@ export default function getPlugins(
     hydrateReply,
     hydrate(),
     session({
-      initial: (): SessionData => ({ secretGuestMenu: 'idle', step: 'idle', addAddressMenu: "idle", secretGuestFormData: {} }),
+      initial: (): SessionData => ({ languageMenu: "idle", secretGuestMenu: 'idle', step: 'idle', addAddressMenu: "idle", secretGuestFormData: {} }),
       storage: config.BOT_DB === 'fileStore'
         ? new FileAdapter({
           dirName: 'session',
