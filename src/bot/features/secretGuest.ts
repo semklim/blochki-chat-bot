@@ -9,11 +9,17 @@ const composer = new Composer<Context>()
 const feature = composer.chatType('private');
 
 feature
-  .filter((ctx) => ctx.hasText('Secret guest'))
+  .filter((ctx) => ctx.hasText(ctx.t('main_menu.secret-guest')))
   .on('msg:text',
     logHandle('command-secretGuest'),
     chatAction('typing'),
     async (ctx) => {
+      await ctx.reply(ctx.t('secret-guest.start'), {
+        reply_markup: {
+          remove_keyboard: true,
+        }
+      });
+
       if (!ctx.session.contact) {
         ctx.session.secretGuestMenu = 'contact';
         await ctx.reply(

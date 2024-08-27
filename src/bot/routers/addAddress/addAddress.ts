@@ -23,7 +23,7 @@ addAddress.on("msg:text", logHandle('addAddress-command'), async (ctx) => {
 
   await ctx.reply(`*${ctx.t('add-address.save')}* \`\`\`text ${arr.join(', ')} \`\`\``, {
     parse_mode: 'MarkdownV2',
-    reply_markup: createMainMenuKeyboard(),
+    reply_markup: createMainMenuKeyboard(ctx),
   });
 });
 
@@ -36,6 +36,6 @@ editAddress.on("msg:text", logHandle('editAddress-command'), async (ctx) => {
 
   await ctx.reply(`*${ctx.t('add-address.save')}* \`\`\`text ${arr.join(', ')} \`\`\``, {
     parse_mode: 'MarkdownV2',
-    reply_markup: createMainMenuKeyboard(),
+    reply_markup: createMainMenuKeyboard(ctx),
   });
 });

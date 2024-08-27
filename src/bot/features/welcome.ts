@@ -14,7 +14,7 @@ feature.command('start', logHandle('command-start'), async (ctx) => {
     await ctx.i18n.setLocale('en');
   }
   return ctx.reply(ctx.t('welcome'), {
-    reply_markup: createMainMenuKeyboard(),
+    reply_markup: createMainMenuKeyboard(ctx),
   })
 })
 

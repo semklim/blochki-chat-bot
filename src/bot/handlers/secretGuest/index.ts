@@ -116,7 +116,7 @@ function finishHandler(): Middleware<Context> {
 
 
     ctx.reply(ctx.t('secret-guest.finish'), {
-      reply_markup: createMainMenuKeyboard()
+      reply_markup: createMainMenuKeyboard(ctx)
     });
   }
 }

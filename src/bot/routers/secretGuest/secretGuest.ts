@@ -56,7 +56,7 @@ date.on("callback_query:data",
         ctx.session.secretGuestMenu = 'idle';
 
         return await ctx.reply(ctx.t('empty-address'), {
-          reply_markup: createMainMenuKeyboard(),
+          reply_markup: createMainMenuKeyboard(ctx),
         });
       }
 
@@ -439,8 +439,10 @@ photos
       ctx.session.secretGuestMenu = 'idle';
 
       await saveFormLocal({ user_id: ctx.chat.id, value: ctx.session.secretGuestFormData });
+      ctx.session.secretGuestFormData = {};
+
       ctx.reply(ctx.t('secret-guest.finish'), {
-        reply_markup: createMainMenuKeyboard()
+        reply_markup: createMainMenuKeyboard(ctx)
       });
     }
   )
