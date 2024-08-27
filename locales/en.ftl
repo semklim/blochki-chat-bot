@@ -86,7 +86,8 @@ secret-guest =
     .ratedishes = Rate the taste of the dishes.
     .clientFewWords = Describe your overall impression and provide recommendations regarding the cleanliness, service, and assortment of the establishment.
     .recommendEstablishment = Would you recommend the establishment to your acquaintances?
-    .photos = Please send a photo of your order and the receipt.
+    .photos = Please send all photos of your order and the receipt and after click the button "✅ All photos added" in menu bellow.
+    .allPhotosBtn = ✅ All photos added
     .finish = Thank you for your work.
 
 noticeAndGreetQuestion =

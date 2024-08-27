@@ -1,7 +1,9 @@
 import { selectAddressData } from "#root/bot/callback-data/select-address.js";
 import { Context } from "#root/bot/context.js";
+import { isImage } from "#root/bot/filters/fileType.js";
 import validateAnswer from "#root/bot/filters/secret-guest/validateAnswer.js";
-import { rateSelectorHandler, textHandler } from "#root/bot/handlers/secretGuest/index.js";
+import { documentPhotoHandler, photoHandler, rateSelectorHandler, textHandler } from "#root/bot/handlers/secretGuest/index.js";
+import { saveFormLocal } from "#root/bot/handlers/secretGuest/saveFormLocal.js";
 import { logHandle } from "#root/bot/helpers/logging.js";
 import createMainMenuKeyboard from "#root/bot/keyboards/mainMenu.js";
 import { createSelectAddressKeyboard } from "#root/bot/keyboards/select-address.js";
@@ -348,7 +350,6 @@ const ratedishes = secretGuestRouter.route("ratedishes");
 
 ratedishes
   .on("msg:text",
-    logHandle("keyboard-ratedishes-select"),
     rateSelectorHandler({
       currStep: 'ratedishes',
       nextStep: 'clientFewWords',
@@ -364,7 +365,6 @@ const clientFewWords = secretGuestRouter.route("clientFewWords");
 
 clientFewWords
   .on("msg:text",
-    logHandle("keyboard-clientFewWords-select"),
     textHandler({
       currStep: 'clientFewWords',
       nextStep: 'recommendEstablishment',
@@ -384,11 +384,10 @@ recommendEstablishment
     ctx.t('not'),
   ]))
   .on("msg:text",
-    logHandle("keyboard-recommendEstablishment-select"),
     textHandler({
       currStep: 'recommendEstablishment',
       nextStep: 'photos',
-      customKeyboard: () => ({ remove_keyboard: true, })
+      customKeyboard: (ctx) => new Keyboard().text(ctx.t('secret-guest.allPhotosBtn')).resized(),
     })
   );
 
@@ -399,21 +398,57 @@ recommendEstablishment.use((ctx) =>
 const photos = secretGuestRouter.route("photos");
 
 photos
-  .on("msg:photo",
-    logHandle("keyboard-photos-select"),
-    async (ctx) => {
-      ctx.session.secretGuestFormData["photos"] = ctx.msg.photo;
-      ctx.session.secretGuestMenu = "idle";
+  .filter(async (ctx) => {
+    return typeof ctx.msg?.document !== "object";
+  })
+  .on(["msg:photo"],
+    photoHandler({
+      currStep: 'photos'
+    })
+    // logHandle("keyboard-photos-select"),
+    // async (ctx) => {
+    //   // const date = (ctx.session.secretGuestFormData.date as string).slice(0, 10);
+    //   // const folderPath = `localeStore/photos/secretGuest/${ctx.chat.id}/${date}`;
+    //   // if (!existsSync(folderPath)) {
+    //   //   await mkdir(folderPath, {
+    //   //     recursive: true,
+    //   //   });
+    //   // }
+    //   // const path = await file.download(`./${folderPath}/${file.file_unique_id}.jpg`);
+    //   // await ctx.reply(ctx.t('secret-guest.finish'), {
+    //   //   reply_markup: createMainMenuKeyboard(),
+    //   // });
+    // }
+  );
 
-      await ctx.reply(ctx.t('secret-guest.finish'), {
-        reply_markup: createMainMenuKeyboard(),
+photos
+  .filter(isImage)
+  .on("msg:document",
+    documentPhotoHandler({
+      currStep: 'photos'
+    })
+  );
+
+
+photos
+  .filter((ctx) => validateAnswer(ctx, [
+    ctx.t('secret-guest.allPhotosBtn'),
+  ]))
+  .on("msg:text",
+    async (ctx) => {
+      ctx.session.secretGuestMenu = 'idle';
+
+      await saveFormLocal({ user_id: ctx.chat.id, value: ctx.session.secretGuestFormData });
+      ctx.reply(ctx.t('secret-guest.finish'), {
+        reply_markup: createMainMenuKeyboard()
       });
     }
-  );
+  )
 
 photos.use((ctx) =>
   ctx.reply(ctx.t("secret-guest.photos"))
 );
+
 
 
 

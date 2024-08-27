@@ -1,5 +1,6 @@
 import type { Logger } from "#root/logger.js";
 import { type AutoChatActionFlavor } from "@grammyjs/auto-chat-action";
+import { FileFlavor } from "@grammyjs/files";
 import type { HydrateFlavor } from "@grammyjs/hydrate";
 import type { I18nFlavor } from "@grammyjs/i18n";
 import type { ParseModeFlavor } from "@grammyjs/parse-mode";
@@ -10,36 +11,10 @@ import {
   type SessionFlavor,
 } from "grammy";
 
-export interface IBotMenus {
-  step: "idle" | "changeBd" | "day" | "month"; // крок форми, на якому ми знаходимося
-  secretGuestMenu: "idle"
-  | "contact"
-  | "date"
-  | "address"
-  | "fasade"
-  | "zale"
-  | "chistotaVitrin"
-  | "privitnist"
-  | "noticeAndGreet"
-  | "offerAdditional"
-  | "giveReceipt"
-  | "askApp"
-  | "askTypeCoffee"
-  | "rateAssortment"
-  | "ratePricingPolicy"
-  | "overallImpression"
-  | "comeback"
-  | "dishesChose"
-  | "ratedishes"
-  | "clientFewWords"
-  | "recommendEstablishment"
-  | "photos";
-  addAddressMenu: "idle" | "add" | "edit";
-}
 
 export interface SessionData extends IBotMenus {
   contact?: Contact | string;
-  secretGuestFormData: Record<string, unknown>;
+  secretGuestFormData: Partial<SecretGuestFormData>;
   __language_code?: string;
   timeout?: number;
   prevMenu?: string;
@@ -65,12 +40,14 @@ interface ExtendedContextFlavor {
 }
 
 export type Context = ParseModeFlavor<
-  HydrateFlavor<
-    DefaultContext &
-    ExtendedContextFlavor &
-    SessionFlavor<SessionData> &
-    I18nFlavor &
-    AutoChatActionFlavor
+  FileFlavor<
+    HydrateFlavor<
+      DefaultContext &
+      ExtendedContextFlavor &
+      SessionFlavor<SessionData> &
+      I18nFlavor &
+      AutoChatActionFlavor
+    >
   >
 >;
 

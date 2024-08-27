@@ -24,4 +24,4 @@
  *   console.log('Invalid user object.');
  * }
  */
-export const hasProperty = <T>(obj: any, propertyName: string): obj is T => propertyName in obj;
+export const hasProperty = <T>(obj: any, propertyName: keyof T): obj is T => propertyName in obj;

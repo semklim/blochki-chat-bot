@@ -4,6 +4,7 @@ import getPlugins from '#root/bot/plugins/plugins.js';
 import { IConfig } from '#root/config/config.schema.js';
 import { logger } from '#root/logger.js';
 import BotServer from '#root/server/index.js';
+import { hydrateFiles } from '@grammyjs/files';
 import { parseMode } from '@grammyjs/parse-mode';
 import { Router } from '@grammyjs/router';
 import { Composer, Bot as TelegramBot, type Api, type Middleware, type RawApi } from 'grammy';
@@ -45,6 +46,7 @@ export default class Bot {
     });
 
     this.botEntity.api.config.use(parseMode('HTML'));
+    this.botEntity.api.config.use(hydrateFiles(this.botEntity.token));
     this.bot = this.botEntity.errorBoundary(errorHandler);
     this.plugins = getPlugins(this.config);
     this.regPlugin(...this.plugins);

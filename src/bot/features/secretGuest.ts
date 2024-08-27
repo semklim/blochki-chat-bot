@@ -27,13 +27,13 @@ feature
           }
         );
       } else {
+        ctx.session.secretGuestMenu = "date";
         await ctx.reply(ctx.t('secret-guest.dateAndTime'), {
           reply_markup: {
             remove_keyboard: true,
           }
         });
         bot.calendar.startNavCalendar(ctx);
-        ctx.session.secretGuestMenu = "date";
       }
     }
   )
