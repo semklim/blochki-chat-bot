@@ -4,6 +4,9 @@ language_command =
     .description = Change language
 setcommands_command =
     .description = Set bot commands
+add_address_command = Add address to database
+edit_address_command = Set new addresses in database
+add_secret_guest_command = Add new users to secret guest form
 
 welcome = Welcome!
 
@@ -16,6 +19,16 @@ add-address =
     .answer = Thank you. These are all the addresses you provided.
     .edit = Enter new addresses\. They will replace the existing ones\.
     .save = The new list of addresses has been successfully saved\.
+
+add-secretGuest =
+    .start = Write all usernames, separating them with commas
+             Example: 
+             > @abba_123, @t_123est, @bul_ochki, @bul_ochki
+    .answer = Thank you. These are all the users you specified.
+    .edit = Write new addresses\. They will replace the existing ones\.
+    .save = The new list of users, secret guests, has been successfully saved\.
+    .not-valid = There is an error in the username. Allowed characters are @ A-Z a-z 0-9 _.
+    .usersAnswer = You have become a secret guest.
 
 time-limit =
     .timeout = The waiting time has expired.

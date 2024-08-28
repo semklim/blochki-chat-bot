@@ -23,6 +23,7 @@ interface IBotMenus {
   | "recommendEstablishment"
   | "photos";
   addAddressMenu: "idle" | "add" | "edit";
+  addSecretGuestMenu: "idle" | "add" | "edit";
   languageMenu: "idle" | "change";
 }
 

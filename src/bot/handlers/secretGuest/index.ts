@@ -7,7 +7,7 @@ import { Other } from "@grammyjs/hydrate";
 import { Middleware } from "grammy";
 import { ForceReply, ReplyKeyboardMarkup, ReplyKeyboardRemove } from "grammy/types";
 import { getExtension } from "hono/utils/mime";
-import { savePhoto } from "./savePhoto.js";
+import { savePhoto } from "../saveDataLocale/secretGuest/savePhoto.js";
 
 interface ISecretGuestHandler {
   currStep: IBotMenus["secretGuestMenu"],
@@ -116,7 +116,7 @@ function finishHandler(): Middleware<Context> {
 
 
     ctx.reply(ctx.t('secret-guest.finish'), {
-      reply_markup: createMainMenuKeyboard(ctx)
+      reply_markup: await createMainMenuKeyboard(ctx)
     });
   }
 }

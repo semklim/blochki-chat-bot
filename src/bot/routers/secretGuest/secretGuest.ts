@@ -2,8 +2,9 @@ import { selectAddressData } from "#root/bot/callback-data/select-address.js";
 import { Context } from "#root/bot/context.js";
 import { isImage } from "#root/bot/filters/fileType.js";
 import validateAnswer from "#root/bot/filters/secret-guest/validateAnswer.js";
+import { saveFormLocal } from "#root/bot/handlers/saveDataLocale/secretGuest/saveFormLocal.js";
+import { saveUser } from "#root/bot/handlers/saveDataLocale/users/users.js";
 import { documentPhotoHandler, photoHandler, rateSelectorHandler, textHandler } from "#root/bot/handlers/secretGuest/index.js";
-import { saveFormLocal } from "#root/bot/handlers/secretGuest/saveFormLocal.js";
 import { logHandle } from "#root/bot/helpers/logging.js";
 import createMainMenuKeyboard from "#root/bot/keyboards/mainMenu.js";
 import { createSelectAddressKeyboard } from "#root/bot/keyboards/select-address.js";
@@ -23,12 +24,26 @@ const contact = secretGuestRouter.route("contact");
 contact.on("msg:contact",
   logHandle('secret-guest-contact'),
   async (ctx) => {
-    ctx.session.contact = ctx.msg.contact;
+    const contacts = ctx.msg.contact;
+    ctx.session.contact = contacts;
     ctx.session.secretGuestMenu = 'date';
     await ctx.reply(ctx.t('secret-guest.contact-answer'), {
       reply_markup: {
         remove_keyboard: true,
       }
+    });
+
+    saveUser({
+      username: ctx.from?.username,
+      chat_id: ctx.chat.id,
+      lang: ctx.session.__language_code,
+      contact: {
+        first_name: contacts.first_name,
+        last_name: contacts.last_name,
+        phone_number: contacts.phone_number,
+        user_id: contacts.user_id || ctx.chat.id,
+        vcard: contacts.vcard,
+      },
     });
     await ctx.reply(ctx.t('secret-guest.dateAndTime'), {
       reply_markup: {
@@ -56,7 +71,7 @@ date.on("callback_query:data",
         ctx.session.secretGuestMenu = 'idle';
 
         return await ctx.reply(ctx.t('empty-address'), {
-          reply_markup: createMainMenuKeyboard(ctx),
+          reply_markup: await createMainMenuKeyboard(ctx),
         });
       }
 
@@ -442,7 +457,7 @@ photos
       ctx.session.secretGuestFormData = {};
 
       ctx.reply(ctx.t('secret-guest.finish'), {
-        reply_markup: createMainMenuKeyboard(ctx)
+        reply_markup: await createMainMenuKeyboard(ctx)
       });
     }
   )

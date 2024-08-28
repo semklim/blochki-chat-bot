@@ -20,22 +20,27 @@ const commands: ICommands[] = [
     description: (lang) => i18n.t(lang, 'setcommands_command.description'),
     isAdmin: true,
   },
+  // {
+  //   command: 'birthday',
+  //   description: () => 'change bd date',
+  // },
+  // {
+  //   command: 'change_bd',
+  //   description: () => 'reset bd date',
+  // },
   {
-    command: 'birthday',
-    description: () => 'change bd date',
-  },
-  {
-    command: 'change_bd',
-    description: () => 'reset bd date',
+    command: 'addsecretguest',
+    description: (lang) => i18n.t(lang, 'add_secret_guest_command'),
+    isAdmin: true,
   },
   {
     command: 'addaddress',
-    description: () => 'Add address to database',
+    description: (lang) => i18n.t(lang, 'add_address_command'),
     isAdmin: true,
   },
   {
     command: 'editaddress',
-    description: () => 'set new address in database',
+    description: (lang) => i18n.t(lang, 'edit_address_command'),
     isAdmin: true,
   }
 
@@ -75,6 +80,8 @@ function getGroupChatCommands(_localeCode: string): BotCommand[] {
 }
 
 export async function setCommandsHandler(ctx: CommandContext<Context>) {
+  console.log("LANG IN SYSTEM -------->", await ctx.i18n.getLocale());
+
   const DEFAULT_LANGUAGE_CODE = await ctx.i18n.getLocale() ?? 'en';
   console.log(getCommands(DEFAULT_LANGUAGE_CODE));
   // set private chat commands

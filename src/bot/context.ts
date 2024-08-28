@@ -13,9 +13,10 @@ import {
 
 
 export interface SessionData extends IBotMenus {
+  username?: string;
   contact?: Contact | string;
   secretGuestFormData: Partial<SecretGuestFormData>;
-  __language_code?: string;
+  __language_code: "en" | "uk";
   timeout?: number;
   prevMenu?: string;
   userId?: number;
